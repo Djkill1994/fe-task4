@@ -32,7 +32,7 @@ export const RequireAuth: FC<IRequireAuthProps> = ({ children }) => {
   }
 
   return (
-    <Box justifyContent="space-evenly">
+    <Box display="flex" justifyContent="space-evenly">
       <CircularProgress />
     </Box>
   );

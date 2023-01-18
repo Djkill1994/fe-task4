@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface IAuthRecord {
-  banned: boolean;
+  status: boolean;
 }
 
 interface ILoginApiResponse {
@@ -15,11 +15,11 @@ export const loginApi = createApi({
   endpoints: (build) => ({
     login: build.mutation<
       ILoginApiResponse,
-      { identity: string; password: string }
+      { email: string; password: string }
     >({
       query(data) {
         return {
-          url: "collections/users/auth-with-password",
+          url: "auth/login",
           method: "post",
           body: data,
         };

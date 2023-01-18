@@ -10,13 +10,18 @@ export const registrationApi = createApi({
   endpoints: (build) => ({
     registration: build.mutation<
       IRegistrationApi,
-      { name: string; email: string; password: string; passwordConfirm: string }
+      {
+        username: string;
+        email: string;
+        password: string;
+        passwordConfirm: string;
+      }
     >({
       query(data) {
         return {
-          url: "collections/users/records",
+          url: "auth/registration",
           method: "post",
-          body: { ...data, emailVisibility: true },
+          body: data,
         };
       },
     }),

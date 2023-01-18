@@ -1,13 +1,12 @@
 import { Button, Stack, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
-import { loginSelector } from "../../../features/Auth/slice/login.slice";
 import { useNavigate } from "react-router-dom";
 import { FC } from "react";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useAuthRefreshQuery } from "../../../features/Users/api/users.api";
 
 export const Header: FC = () => {
   const navigate = useNavigate();
-  const { currentUser } = useSelector(loginSelector);
+  const { data } = useAuthRefreshQuery();
 
   const logOut = (): void => {
     localStorage.clear();
@@ -24,7 +23,7 @@ export const Header: FC = () => {
       borderBottom="1px solid #dbdbdb"
       p="0 10px"
     >
-      <Typography>Hello: {currentUser?.name}</Typography>
+      <Typography>Hello: {data?.username}</Typography>
       <Stack>
         <Button onClick={logOut}>
           <LogoutIcon />

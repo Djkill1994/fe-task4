@@ -5,10 +5,9 @@ import { useRegistrationMutation } from "../../../api/registration.api";
 import { useNavigate } from "react-router-dom";
 import { EMAIL_REGEX } from "../../../../../common/constans/regex";
 import { FormInputPassword } from "./FormInputPassword";
-import toast from "react-hot-toast";
 
 export interface IRegistrationForm {
-  name: string;
+  username: string;
   email: string;
   password: string;
   passwordConfirm: string;
@@ -30,7 +29,6 @@ export const RegistrationForm: FC = () => {
   useEffect(() => {
     if (isSuccess) {
       navigate("/", { replace: true });
-      toast.success("Check your email to complete registration");
     }
   }, [isSuccess]);
 
@@ -61,9 +59,9 @@ export const RegistrationForm: FC = () => {
         </Grid>
         <Grid item xs={12} width="100%">
           <TextField
-            {...register("name", { required: true })}
-            error={!!errors.name}
-            helperText={!!errors.name && "Enter your name"}
+            {...register("username", { required: true })}
+            error={!!errors.username}
+            helperText={!!errors.username && "Enter your name"}
             size="small"
             label="Full Name"
             autoComplete="fullName"
@@ -77,7 +75,6 @@ export const RegistrationForm: FC = () => {
             label="Password"
             inputProps={register("password", {
               required: true,
-              minLength: 10,
             })}
           />
         </Grid>
@@ -88,7 +85,6 @@ export const RegistrationForm: FC = () => {
             label="Confirm Password"
             inputProps={register("passwordConfirm", {
               required: true,
-              minLength: 10,
             })}
           />
         </Grid>

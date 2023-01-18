@@ -16,10 +16,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useLoginMutation } from "../../../../api/login.api";
 import { useNavigate } from "react-router-dom";
 import { EMAIL_REGEX } from "../../../../../../common/constans/regex";
-import toast from "react-hot-toast";
+import { usersApi } from "../../../../../Users/api/users.api";
 
 interface ILoginForm {
-  identity: string;
+  email: string;
   password: string;
 }
 
@@ -38,24 +38,21 @@ export const LoginForm: FC = () => {
   };
 
   useEffect(() => {
-    if (data?.record.banned) {
-      toast.error("You are banned");
-      return;
-    }
     if (data?.token) {
       localStorage.setItem("token", data.token ?? "");
-      navigate("/content", { replace: true });
+      usersApi.util.invalidateTags(["User"]);
+      navigate("/user-list", { replace: true });
     }
-  }, [data?.token, data?.record.banned]);
+  }, [data?.token]);
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
       <Grid container spacing={1.8}>
         <Grid item sm={12} width="100%">
           <TextField
-            {...register("identity", { required: true, pattern: EMAIL_REGEX })}
-            error={!!errors.identity}
-            helperText={!!errors.identity && "Enter email"}
+            {...register("email", { required: true, pattern: EMAIL_REGEX })}
+            error={!!errors.email}
+            helperText={!!errors.email && "Enter email"}
             size="small"
             autoComplete="email"
             fullWidth
@@ -73,7 +70,7 @@ export const LoginForm: FC = () => {
             <OutlinedInput
               id="outlined-adornment-password"
               type={showPassword ? "text" : "password"}
-              {...register("password", { required: true, minLength: 10 })}
+              {...register("password", { required: true })}
               error={!!errors.password}
               endAdornment={
                 <InputAdornment position="end">

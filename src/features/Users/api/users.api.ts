@@ -4,63 +4,61 @@ import { authFetchBaseQuery } from "../../../common/utils/authFetchBaseQuery";
 export interface IUser {
   id: string;
   email: string;
-  name: string;
-  banned: boolean;
-  admin: boolean;
+  username: string;
+  status: boolean;
+  registrationDate: string;
+  lastVisit: string;
 }
 
 type IUsersApiResponse = IUser[];
-
-interface IAuthRefreshResponse {
-  record: IUser;
-}
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
   baseQuery: authFetchBaseQuery,
   tagTypes: ["User"],
   endpoints: (build) => ({
-    authRefresh: build.mutation<IAuthRefreshResponse, void>({
+    authRefresh: build.query<IUser, void>({
       query() {
         return {
-          url: "collections/users/auth-refresh",
-          method: "post",
-        };
-      },
-    }),
-    getUsers: build.query<IUsersApiResponse, void>({
-      query() {
-        return {
-          url: "collections/users/records",
+          url: "auth/refresh",
         };
       },
       providesTags: ["User"],
     }),
-    deleteUser: build.mutation<void, string>({
-      query(id) {
+    getUsers: build.query<IUsersApiResponse, void>({
+      query() {
         return {
-          url: `collections/users/records/${id}`,
+          url: "/users",
+        };
+      },
+      providesTags: ["User"],
+    }),
+    deleteUser: build.mutation<void, string[]>({
+      query(ids) {
+        return {
+          url: "/users/delete",
           method: "delete",
+          body: { ids },
         };
       },
       invalidatesTags: ["User"],
     }),
-    banUser: build.mutation<void, string>({
-      query(id) {
+    banUser: build.mutation<void, string[]>({
+      query(ids) {
         return {
-          url: `collections/users/records/${id}`,
-          method: "PATCH",
-          body: { banned: true },
+          url: "/users/ban",
+          method: "post",
+          body: { ids },
         };
       },
       invalidatesTags: ["User"],
     }),
-    unBanUser: build.mutation<void, string>({
-      query(id) {
+    unBanUser: build.mutation<void, string[]>({
+      query(ids) {
         return {
-          url: `collections/users/records/${id}`,
-          method: "PATCH",
-          body: { banned: false },
+          url: "/users/unban",
+          method: "post",
+          body: { ids },
         };
       },
       invalidatesTags: ["User"],
@@ -70,8 +68,8 @@ export const usersApi = createApi({
 
 export const {
   useGetUsersQuery,
-  useAuthRefreshMutation,
   useDeleteUserMutation,
   useBanUserMutation,
   useUnBanUserMutation,
+  useAuthRefreshQuery,
 } = usersApi;

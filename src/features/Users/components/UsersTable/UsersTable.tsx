@@ -11,41 +11,16 @@ import {
 import { Block, CheckCircleOutline } from "@mui/icons-material";
 import { UsersTableHeader } from "./UsersTableHeader";
 import { UsersTableToolbar } from "./UsersTableToolbar";
-
-function createData(
-  id: string,
-  name: string,
-  email: string,
-  registrationDate: string,
-  lastVisit: string,
-  status: boolean
-) {
-  return {
-    id,
-    name,
-    email,
-    registrationDate,
-    lastVisit,
-    status,
-  };
-}
-
-const rows = [
-  createData("iw", "Nome", "sdkhfb@jjd.ee", "21.12.2022", "4.7.2023", false),
-  createData("23", "Fsd", "sdkhfb@jjd.ee", "21.12.2022", "4.7.2023", false),
-  createData("dfg", "Dggrg", "sdkhfb@jjd.ee", "21.12.2022", "4.7.2023", false),
-  createData("4234", "Fsrgs", "sdkhfb@jjd.ee", "21.12.2022", "4.7.2023", true),
-  createData("g4", "Ggwg", "sdkhfb@jjd.ee", "21.12.2022", "4.7.2023", false),
-  createData("fgv3", "GBbwe", "sdkhfb@jjd.ee", "21.12.2022", "4.7.2023", false),
-];
+import { useGetUsersQuery } from "../../api/users.api";
 
 export const UsersTable: FC = () => {
   const [selected, setSelected] = useState<string[]>([]);
+  const { data } = useGetUsersQuery();
 
   const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>): void => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.name);
-      setSelected(newSelected);
+      const newSelected = data?.map((n) => n.id);
+      setSelected(newSelected || []);
     } else {
       setSelected([]);
     }
@@ -73,51 +48,67 @@ export const UsersTable: FC = () => {
 
   return (
     <Paper sx={{ width: "100%", mb: 2 }}>
-      <UsersTableToolbar numSelected={selected.length} />
+      <UsersTableToolbar
+        selectedIds={selected}
+        onActionComplete={() => setSelected([])}
+      />
       <TableContainer>
         <Table aria-labelledby="tableTitle">
           <UsersTableHeader
             numSelected={selected.length}
             onSelectAllClick={handleSelectAllClick}
-            rowCount={rows.length}
+            rowCount={data?.length || 0}
           />
           <TableBody>
-            {rows.map((row, index) => {
-              const isItemSelected = selected.indexOf(row.name) !== -1;
-              const labelId = `enhanced-table-checkbox-${index}`;
+            {data?.map(
+              ({
+                email,
+                username,
+                id,
+                status,
+                registrationDate,
+                lastVisit,
+              }) => {
+                const isItemSelected = selected.indexOf(id) !== -1;
+                const labelId = `enhanced-table-checkbox-${id}`;
 
-              return (
-                <TableRow
-                  hover
-                  onClick={(event) => handleClick(event, row.name)}
-                  role="checkbox"
-                  aria-checked={isItemSelected}
-                  tabIndex={-1}
-                  key={row.id}
-                  selected={isItemSelected}
-                >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      color="primary"
-                      checked={isItemSelected}
-                      inputProps={{
-                        "aria-labelledby": labelId,
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell id={labelId} scope="row">
-                    {row.id}
-                  </TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>{row.registrationDate}</TableCell>
-                  <TableCell>{row.lastVisit}</TableCell>
-                  <TableCell>
-                    {row.status ? <Block /> : <CheckCircleOutline />}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                return (
+                  <TableRow
+                    hover
+                    onClick={(event) => handleClick(event, id)}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={id}
+                    selected={isItemSelected}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        color="primary"
+                        checked={isItemSelected}
+                        inputProps={{
+                          "aria-labelledby": labelId,
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell id={labelId} scope="row">
+                      {id}
+                    </TableCell>
+                    <TableCell>{username}</TableCell>
+                    <TableCell>{email}</TableCell>
+                    <TableCell>{registrationDate}</TableCell>
+                    <TableCell>{lastVisit}</TableCell>
+                    <TableCell>
+                      {status ? (
+                        <Block color="error" />
+                      ) : (
+                        <CheckCircleOutline color="success" />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              }
+            )}
           </TableBody>
         </Table>
       </TableContainer>

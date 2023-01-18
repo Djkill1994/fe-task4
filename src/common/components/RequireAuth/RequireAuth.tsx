@@ -1,8 +1,6 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuthRefreshMutation } from "../../../features/Users/api/users.api";
-import { setCurrentUser } from "../../../features/Auth/slice/login.slice";
-import { useDispatch } from "react-redux";
+import { useAuthRefreshQuery } from "../../../features/Users/api/users.api";
 import { Box, CircularProgress } from "@mui/material";
 
 interface IRequireAuthProps {
@@ -10,18 +8,7 @@ interface IRequireAuthProps {
 }
 
 export const RequireAuth: FC<IRequireAuthProps> = ({ children }) => {
-  const [authRefresh, { isError, isSuccess, data }] = useAuthRefreshMutation();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (data) {
-      dispatch(setCurrentUser(data.record));
-    }
-  }, [data]);
-
-  useEffect(() => {
-    authRefresh();
-  }, []);
+  const { isError, isSuccess } = useAuthRefreshQuery();
 
   if (isError) {
     return <Navigate to="/" replace />;

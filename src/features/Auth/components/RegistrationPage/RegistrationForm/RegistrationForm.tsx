@@ -1,10 +1,11 @@
-import { Box, Button, Grid, TextField } from "@mui/material";
+import { Box, Grid, TextField } from "@mui/material";
 import { FC, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRegistrationMutation } from "../../../api/registration.api";
 import { useNavigate } from "react-router-dom";
 import { EMAIL_REGEX } from "../../../../../common/constans/regex";
 import { FormInputPassword } from "./FormInputPassword";
+import { LoadingButton } from "@mui/lab";
 
 export interface IRegistrationForm {
   username: string;
@@ -19,7 +20,7 @@ export const RegistrationForm: FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<IRegistrationForm>();
-  const [registerUser, { isSuccess }] = useRegistrationMutation();
+  const [registerUser, { isSuccess, isLoading }] = useRegistrationMutation();
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<IRegistrationForm> = (data) => {
@@ -89,9 +90,15 @@ export const RegistrationForm: FC = () => {
           />
         </Grid>
         <Grid item xs={12} width="100%">
-          <Button type="submit" variant="contained" sx={{ mt: 3 }} fullWidth>
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            sx={{ mt: 3 }}
+            fullWidth
+            loading={isLoading}
+          >
             Sign Up
-          </Button>
+          </LoadingButton>
         </Grid>
       </Grid>
     </Box>

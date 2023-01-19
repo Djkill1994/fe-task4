@@ -30,7 +30,7 @@ export const LoginForm: FC = () => {
     formState: { errors },
   } = useForm<ILoginForm>();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [login, { data }] = useLoginMutation();
+  const [login, { data, isLoading }] = useLoginMutation();
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<ILoginForm> = (data) => {
@@ -98,6 +98,7 @@ export const LoginForm: FC = () => {
             variant="contained"
             fullWidth
             type="submit"
+            loading={isLoading}
           >
             Log in
           </LoadingButton>

@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { loginApi } from "./features/Auth/api/login.api";
 import { usersApi } from "./features/Users/api/users.api";
-import { rtkQueryErrorMessenger } from "./common/middleware/rtkQueryErrorMessenger";
+import { rtkQueryMessenger } from "./common/middleware/rtkQueryMessenger";
 import { registrationApi } from "./features/Auth/api/registration.api";
 
 export const store = configureStore({
@@ -13,7 +13,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
-      rtkQueryErrorMessenger,
+      rtkQueryMessenger,
       registrationApi.middleware,
       loginApi.middleware,
       usersApi.middleware
@@ -21,5 +21,3 @@ export const store = configureStore({
 });
 
 setupListeners(store.dispatch);
-
-export type RootState = ReturnType<typeof store.getState>;
